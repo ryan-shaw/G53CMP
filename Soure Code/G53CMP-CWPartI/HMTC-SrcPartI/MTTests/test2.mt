@@ -14,8 +14,9 @@ in
                 n := n + d2
             end
         
-        z := 1;
-        repeat 
-            z := z + 1;
-        until z == 5;
+        x := 1;
+        repeat
+            x := x + 1
+        until x > 42
+
     end
