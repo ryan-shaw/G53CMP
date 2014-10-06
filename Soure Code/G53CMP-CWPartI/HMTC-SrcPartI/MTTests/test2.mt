@@ -13,4 +13,9 @@ in
 	        d2 := d2 + d1;
                 n := n + d2
             end
+        
+        z := 1;
+        repeat 
+            z := z + 1;
+        until z == 5;
     end
