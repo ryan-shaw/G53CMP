@@ -1,3 +1,5 @@
 *.hi
 *.o
 *.exe
+Parser.hs
+happy-output.hs
