@@ -69,6 +69,8 @@ import Scanner
     THEN	{ (Then, $$) }
     VAR		{ (Var, $$) }
     WHILE	{ (While, $$) }
+    REPEAT  { (Repeat, $$) }
+    UNTIL   { (Until, $$) }
     LITINT	{ (LitInt {}, _) }
     ID          { (Id {}, _) }
     '+'		{ (Op {opName="+"},   _) }
@@ -114,6 +116,8 @@ command
         { CmdIf {ciCond = $2, ciThen = $4, ciElse = $6, cmdSrcPos = $1} }
     | WHILE expression DO command
         { CmdWhile {cwCond = $2, cwBody = $4, cmdSrcPos = $1} }
+    | REPEAT command UNTIL expression
+        { CmdRepeat {crCond = $4, crBody = $2, cmdSrcPos = $1} }
     | LET declarations IN command
         { CmdLet {clDecls = $2, clBody = $4, cmdSrcPos = $1} }
     | BEGIN commands END

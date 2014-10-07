@@ -13,4 +13,10 @@ in
 	        d2 := d2 + d1;
                 n := n + d2
             end
+        
+        x := 1;
+        repeat
+            x := x + 1
+        until x > 42
+
     end
