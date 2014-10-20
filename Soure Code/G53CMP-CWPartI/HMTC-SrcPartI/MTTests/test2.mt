@@ -13,9 +13,4 @@ in
             d2 := d2 + d1;
                 n := n + d2
             end
-        repeat
-            d2 := d2 + 1 
-        until 
-            d2 == 42
-
     end
