@@ -110,8 +110,8 @@ data Command
 	  cmdSrcPos :: SrcPos
       }
     | CmdRepeat {
-      crCond  :: Expression, -- ^ Loop condition
-      crBody  :: Command,  -- ^ Loop body
+          crCond  :: Expression, -- ^ Loop condition
+          crBody  :: Command,  -- ^ Loop body
     cmdSrcPos :: SrcPos
     }
 

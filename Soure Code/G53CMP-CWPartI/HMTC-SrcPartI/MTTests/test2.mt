@@ -9,14 +9,13 @@ in
         n := 1;
         while n < (25 + 1) do
             begin
-	        putint(n);
-	        d2 := d2 + d1;
+            putint(n);
+            d2 := d2 + d1;
                 n := n + d2
             end
         
-        x := 1;
         repeat
-            x := x + 1
-        until x > 42
+            d2 := d2 + 1
+        until d2 > 42
 
     end
