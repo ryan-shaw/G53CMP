@@ -92,27 +92,27 @@ data Command
       }
     -- | Conditional command
     | CmdIf {
-	  ciCond    :: Expression,	-- ^ Condition
-	  ciThen    :: Command,		-- ^ Then-branch
-	  ciElse    :: Command,		-- ^ Else-branch
+      	  ciCond    :: Expression,	-- ^ Condition
+      	  ciThen    :: Command,		-- ^ Then-branch
+      	  ciElse    :: Command,		-- ^ Else-branch
           cmdSrcPos :: SrcPos
       }
     -- | While-loop
     | CmdWhile {
           cwCond    :: Expression,	-- ^ Loop-condition
           cwBody    :: Command,		-- ^ Loop-body
-	  cmdSrcPos :: SrcPos
+          cmdSrcPos :: SrcPos
       }
     -- | Let-command
     | CmdLet {
           clDecls   :: [Declaration],	-- ^ Declarations
           clBody    :: Command,		-- ^ Let-body
-	  cmdSrcPos :: SrcPos
+	        cmdSrcPos :: SrcPos
       }
     | CmdRepeat {
           crCond  :: Expression, -- ^ Loop condition
           crBody  :: Command,  -- ^ Loop body
-    cmdSrcPos :: SrcPos
+          cmdSrcPos :: SrcPos
     }
 
 
