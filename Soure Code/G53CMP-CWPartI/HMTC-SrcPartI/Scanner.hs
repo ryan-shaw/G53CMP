@@ -129,6 +129,8 @@ scanner cont = P $ scan
         mkOpOrSpecial ":"  = Colon
         mkOpOrSpecial ":=" = ColEq
         mkOpOrSpecial "="  = Equals
+        mkOpOrSpecial "?"  = Cond
+
         mkOpOrSpecial name = Op {opName = name}
 
         -- scanIdOrKwd :: Int -> Int -> Char -> String -> D a

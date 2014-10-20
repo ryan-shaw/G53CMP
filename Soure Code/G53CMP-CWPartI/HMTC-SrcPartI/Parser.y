@@ -73,6 +73,7 @@ import Scanner
     UNTIL   { (Until, $$) }
     LITINT	{ (LitInt {}, _) }
     ID          { (Id {}, _) }
+    '?'     { (Cond, $$) }
     '+'		{ (Op {opName="+"},   _) }
     '-'		{ (Op {opName="-"},   _) }
     '*'		{ (Op {opName="*"},   _) }
@@ -94,6 +95,7 @@ import Scanner
 %left '+' '-'
 %left '*' '/'
 %right '^'
+%right '?' ':'
 
 %%
 
@@ -172,6 +174,11 @@ expression
     | expression opclass_exponential expression %prec '^'
 	{ ExpApp {eaFun     = $2,
                   eaArgs    = [$1,$3],
+                  expSrcPos = srcPos $1} }
+    | expression '?' expression ':' expression %prec '?'
+    { ExpCond { ecBool = $1,
+                  ecExp1 = $3,
+                  ecExp2 = $5,
                   expSrcPos = srcPos $1} }
 
 
