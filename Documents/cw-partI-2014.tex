@@ -1,0 +1,324 @@
+\documentclass[12pt,a4paper]{article}%
+% \usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{alltt}
+\usepackage{verbatim}
+
+\input{defs}
+
+\begin{document}
+
+\frenchspacing
+
+\title{G53CMP Compilers: Coursework 1 \\
+{\Large 20/10/2014}}
+\author{Ryan Shaw\\rxs62u}
+\date{\today}
+\maketitle
+
+\newpage
+
+\appendix
+
+\section{Task I.1}
+\label{app:mg}
+
+\subsection{Grammar extension}
+
+First all the grammars are extended to include the new loop construct
+\subsubsection{Lexical Syntax}
+\begin{center}
+\begin{tabular}{lcl}
+
+\nterm{Keyword} & \yields & \term{begin} $|$ \term{const} $|$ \term{do}
+                            $|$ \term{else} $|$ \term{end} $|$ \term{if}
+                            $|$ \term{in} \\
+                        & & $|$ \term{let} $|$ \term{then} $|$ \term{var} 
+                            $|$ \term{while} $|$ \term{repeat} $|$ \term{until}\\
+&& \\
+\end{tabular}
+\end{center}
+\subsubsection{Context-Free Syntax}
+
+\begin{center}
+\begin{tabular}{lcl}
+\nterm{Command}           & \yields & \nterm{VarExpression} \term{:=}
+                                      \nterm{Expression}                    \\
+                          & \alt    & \nterm{VarExpression} \term{(}
+                                      \nterm{Expressions} \term{)}          \\
+                          & \alt    & \term{if} \nterm{Expression}
+                                      \term{then} \nterm{Command}	    \\
+                                   && \term{else} \nterm{Command}           \\
+                          & \alt    & \term{while} \nterm{Expression}
+                                      \term{do} \nterm{Command}             \\
+                          & \alt    & \term{let} \nterm{Declarations}
+                                      \term{in} \nterm{Command}             \\
+                          & \alt    & \term{begin} \nterm{Commands}
+                                      \term{end}                            \\
+                          & \alt    & \term{repeat} \nterm{Command} \term{until}
+                          			  \nterm{Expression}                    \\
+&& \\
+\end{tabular}
+\end{center}
+
+\subsubsection{Abstract Syntax}
+\begin{center}
+\begin{tabular}{lcll}
+\nterm{Program} & \yields & \nterm{Command} & Program \\
+&&& \\
+
+\nterm{Command} & \yields & \nterm{Expression} \term{:=}
+			    \nterm{Expression}			& CmdAssign \\
+		& $|$	  & \nterm{Expression}
+			    \term{(}
+			    \nterm{Expression}$^*$
+			    \term{)}				& CmdCall   \\
+		& $|$     & \term{begin}
+			    \nterm{Command}$^*$
+			    \term{end}				& CmdSeq    \\
+		& $|$     & \term{if} \nterm{Expression}
+			    \term{then} \nterm{Command}                     \\
+			 && \term{else} \nterm{Command}		& CmdIf	    \\
+		& $|$     & \term{while} \nterm{Expression}
+			    \term{do} \nterm{Command}		& CmdWhile  \\
+		& $|$     & \term{let} \nterm{Declaration}$^*$
+			    \term{in} \nterm{Command}		& CmdLet   \\
+		& $|$   & \term{repeat} \nterm{Command} 
+				\term{until} \nterm{Expression} & CmdRepeat
+	 \\
+\end{tabular}
+\end{center}
+
+
+% BNF grammar similar to the one given in pages.\ 8--9 of the book
+
+Non-terminals are typeset in italics, like \nterm{this}. Terminals
+are typeset in typewriter font, like \term{this}. Terminals whose spelling
+(the concrete character sequence) is different from what is shown in the
+grammar are typeset in italics and underlined, like \metaterm{Identifier} and
+\metaterm{IntegerLiteral}. Their spelling is defined by the lexical
+grammar (where they are non-terminals!).
+
+\begin{center}
+\begin{tabular}{lcl}
+\nterm{Program}           & \yields & \nterm{Command}                       \\
+&& \\		          
+		          
+\nterm{Commands}          & \yields & \nterm{Command}                       \\
+                          & \alt    & \nterm{Command} \term{;}
+                                      \nterm{Commands}                      \\
+&& \\		          
+		          
+\nterm{Command}           & \yields & \nterm{VarExpression} \term{:=}
+                                      \nterm{Expression}                    \\
+                          & \alt    & \nterm{VarExpression} \term{(}
+                                      \nterm{Expressions} \term{)}          \\
+                          & \alt    & \term{if} \nterm{Expression}
+                                      \term{then} \nterm{Command}	    \\
+                                   && \term{else} \nterm{Command}           \\
+                          & \alt    & \term{while} \nterm{Expression}
+                                      \term{do} \nterm{Command}             \\
+                          & \alt    & \term{let} \nterm{Declarations}
+                                      \term{in} \nterm{Command}             \\
+                          & \alt    & \term{begin} \nterm{Commands}
+                                      \term{end}                            \\
+&& \\
+
+\nterm{Expressions}       & \yields & \nterm{Expression}                    \\
+                          & \alt    & \nterm{Expression} \term{,}
+                                      \nterm{Expressions}                   \\
+&& \\
+
+\nterm{Expression}        & \yields & \nterm{PrimaryExpression}             \\
+                          & \alt    & \nterm{Expression}
+				      \nterm{BinaryOperator}
+                                      \nterm{Expression}                    \\
+&& \\
+
+\nterm{PrimaryExpression} & \yields & \metaterm{IntegerLiteral}             \\
+                          & \alt    & \nterm{VarExpression}                 \\
+                          & \alt    & \nterm{UnaryOperator}
+                                      \nterm{PrimaryExpression}             \\
+                          & \alt    & \term{(} \nterm{Expression} \term{)}  \\
+&& \\
+
+\nterm{VarExpression}     & \yields & \metaterm{Identifier}                 \\
+&& \\
+
+\nterm{BinaryOperator}    & \yields & \term{\HAT}
+			              $|$ \term{*} $|$ \term{/}
+                                      $|$ \term{+} $|$ \term{-}
+                                      $|$ \term{<} $|$ \term{<=}
+                                      $|$ \term{==} $|$ \term{!=}
+                                      $|$ \term{>=} $|$ \term{>}
+                                      $|$ \term{\&\&} $|$ \term{||}         \\
+&& \\
+
+\nterm{UnaryOperator}	  & \yields & \term{-} $|$ \term{!}
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{lcl}
+\nterm{Declarations}      & \yields & \nterm{Declaration}                   \\
+                          & \alt    & \nterm{Declaration} \term{;}
+                                      \nterm{Declarations}                  \\
+&& \\
+
+\nterm{Declaration}       & \yields & \term{const} \metaterm{Identifier}
+                                      \term{:} \nterm{TypeDenoter}   
+                                      \term{=} \nterm{Expression}          \\
+                          & \alt    & \term{var} \metaterm{Identifier}
+                                      \term{:} \nterm{TypeDenoter}         \\
+                          & \alt    & \term{var} \metaterm{Identifier}
+                                      \term{:} \nterm{TypeDenoter}
+                                      \term{:=} \nterm{Expression}         \\
+&& \\
+
+\nterm{TypeDenoter}  & \yields & \metaterm{Identifier}
+\end{tabular}
+\end{center}
+
+Note that the productions for \nterm{Expression} makes the grammar as stated
+above ambiguous. Operator precedence and associativity for the \emph{binary}
+operators as defined in the following table is used to disambiguate:
+\begin{center}
+    \begin{tabular}{|@{\ttfamily}c|c|c|}
+    \hline
+    Operator & Precedence & Associativity \\
+    \hline
+    \HAT            & 1 & right \\
+    * /             & 2 & left  \\
+    + -             & 3 & left  \\
+    < <= == != >= > & 4 & non   \\
+    \&\&            & 5 & left  \\
+    ||              & 6 & left  \\
+    \hline
+    \end{tabular}
+\end{center}
+A precedence level of 1 means the highest precedence, 2 means second
+highest, and so on.
+
+Also note that the syntactic category \nterm{Declaration} includes
+\emph{definition} of constants, as not only the type is given, but also the
+value of the constant (through an expression), and that a variable
+declaration includes an optional initialization.
+
+% \newpage
+
+\subsection{MiniTriangle Abstract Syntax}
+\label{app:mt-as}
+
+% MiniTriangle Abstract syntax grammar, freely after page 13 of the book
+
+This is the MiniTriangle abstract syntax. It captures the tree structure of
+MiniTriangle programs as concisely as possible. It is used as the basis for
+designing the datatypes for representing MiniTriangle programs. For example,
+note that there is only one non-terminal for expressions as opposed to three
+in the grammar for the concrete syntax. The extra non-terminals (along with
+a specification of binary operator associativity and precedence) are needed to
+make the concrete syntax \emph{unambiguous}, which is necessary for parsing. 
+But once a program has been successfully parsed, its structure has been
+determined, and ambiguity is no longer an issue. Another difference is that
+general function application has been introduced as one expression form. This
+replaces both concrete unary operator application and concrete (infix) binary
+operator application, as such operators \emph{are} functions of one and two
+arguments, respectively. (The concrete syntax of MiniTriangle currently does
+not include general function application, but that could easily be added.) As
+a consequence, a single ``variable'' terminal \metaterm{Name} also replaces
+both \metaterm{Identifier} and \metaterm{Operator}; i.e.,
+\metaterm{Identifier} $\subseteq$ \metaterm{Name} and \metaterm{Operator}
+$\subseteq$ \metaterm{Name}.
+
+The rightmost column gives the node labels for drawing abstract syntax trees. 
+(They correspond to the names of the data constructors of the of the abstract
+syntax datatypes in the compiler.) Note that some elements of concrete syntax,
+such as keywords, do occur in the productions. They are there to make the
+connection between the concrete and abstract syntax clear, and to provide an
+\emph{alternative} textual representation for the abstract syntax (e.g. for
+use in typing rules). However, these fragments of concrete syntax are
+\emph{omitted} when drawing abstract syntax trees, as they are implied by the
+node labels and thus superfluous. Also note that some of the productions make
+use of the EBNF *-notation for sequences. When drawing an abstract syntax
+tree, that means that the corresponding nodes will have a varying number of
+children.
+
+% The same typesetting conventions are used as for the grammar for the
+% concrete syntax.
+
+% Non-terminals are typeset in normal roman font, like this. Terminals
+% are typeset in typewriter font, like \term{this}. Terminals whose spelling
+% (the concrete character sequence) is different from what is shown in the
+% grammar are typeset in italics, like \metaterm{Identifier} and
+% \metaterm{Integer-Literal}. Their spelling is defined by the lexical
+% grammar (where they are non-terminals!).
+
+
+\begin{center}
+\begin{tabular}{lcll}
+\nterm{Program} & \yields & \nterm{Command} & Program \\
+&&& \\
+
+\nterm{Command} & \yields & \nterm{Expression} \term{:=}
+			    \nterm{Expression}			& CmdAssign \\
+		& $|$	  & \nterm{Expression}
+			    \term{(}
+			    \nterm{Expression}$^*$
+			    \term{)}				& CmdCall   \\
+		& $|$     & \term{begin}
+			    \nterm{Command}$^*$
+			    \term{end}				& CmdSeq    \\
+		& $|$     & \term{if} \nterm{Expression}
+			    \term{then} \nterm{Command}                     \\
+			 && \term{else} \nterm{Command}		& CmdIf	    \\
+		& $|$     & \term{while} \nterm{Expression}
+			    \term{do} \nterm{Command}		& CmdWhile  \\
+		& $|$     & \term{let} \nterm{Declaration}$^*$
+			    \term{in} \nterm{Command}		& CmdLet    \\
+	&&& \\
+
+\nterm{Expression} & \yields & \metaterm{IntegerLiteral} 	& ExpLitInt \\
+		   & $|$     & \metaterm{Name}		 	& ExpVar    \\
+		   & $|$     & \nterm{Expression}
+			       \term{(}
+			       \nterm{Expression}$^*$
+			       \term{)}			 	& ExpApp    \\
+&&& \\
+
+\nterm{Declaration} & \yields & \term{const}
+				\metaterm{Name}
+				\term{:}
+				\nterm{TypeDenoter}			    \\
+			     && \term{=}
+				\nterm{Expression}		& DeclConst \\
+		    & $|$     & \term{var}
+				\metaterm{Name}
+				\term{:}
+				\nterm{TypeDenoter}			    \\
+			     && ( \term{:=} \nterm{Expression}
+				$|$ $\epsilon$ )		& DeclVar   \\
+&&& \\
+
+\nterm{TypeDenoter} & \yields & \metaterm{Name}			& TDBaseType
+\end{tabular}
+\end{center}
+
+% \newpage
+% 
+% \section{MiniTriangle Type System}
+% \label{app:ts}
+% 
+% \newpage
+% 
+% \section{Notes on the Haskell MiniTriangle Compiler (HMTC)}
+% \label{app:hmtc}
+% 
+% \subsection{Overview of HMTC}
+% 
+% \subsection{Naming Conventions}
+
+
+
+\end{document}
+

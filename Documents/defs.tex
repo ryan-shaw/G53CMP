@@ -1,0 +1,123 @@
+% Useful definitions.
+
+\newcommand{\finallongpage}{\enlargethispage{\baselineskip}}
+\newcommand{\finalshortpage}{\enlargethispage{-\baselineskip}}
+\newcommand{\finalpagebreak}{\pagebreak}
+\newcommand{\finalnewpage}{\newpage}
+
+% Some characters.
+\newcommand{\BS}{\char'134}
+\newcommand{\HAT}{\char'136}
+\newcommand{\TILDE}{\char'176}
+
+% Some other useful symbols
+\newcommand{\bottom}{\ensuremath{\perp}\xspace}
+\newcommand{\WRa}{{$\;\;\Rightarrow\;\;$}}
+
+% Visible comments.
+\newcommand{\reminder}[1]{%
+  \begin{description}%
+  \item{\textbf{!!!}} #1%
+  \end{description}%
+}
+
+\newcommand{\topic}[1]{%
+  \begin{description}%
+  \item{\textbf{TOPIC}} #1%
+  \end{description}%
+}
+
+% New environments.
+
+% Old verbatim code: why the extra vspace???
+%\newenvironment{code}%
+%  {\quote\verbatim}%
+%  {\endverbatim\endquote\vspace{\topsep}}
+
+% Verbatim code
+\newenvironment{code}%
+  {\begin{quote}\begin{alltt}}%
+  {\end{alltt}\end{quote}}
+
+% Centered figure
+\newenvironment{cfig}%
+  {\begin{figure}\centering\setlength{\fboxsep}{0.3cm}}%
+  {\end{figure}}
+
+% Theorem-like environments.
+% \theoremstyle{plain}
+
+% Theorems
+% \newtheorem{theorem}{Theorem}[chapter]
+
+% Definitions
+% {
+% \theorembodyfont{\rmfamily}
+% \newtheorem{definition}{Definition}[section]
+% }
+
+% Commands for mathematical typesetting.
+\newcommand{\vect}[1]{\mathbf{#1}}			% vector
+\newcommand{\ddt}[1]{\frac{\mathrm{d}#1}{\mathrm{d}t}}	% d/dt
+
+% Commands for typesetting lambda expressions.
+\newcommand{\abstr}[2]{\texttt{($\lambda$#1.#2)}}
+\newcommand{\app}[2]{\texttt{#1~#2}}
+\newcommand{\appii}[3]{\texttt{#1~#2~#3}}
+\newcommand{\appiii}[4]{\texttt{#1~#2~#3~#4}}
+\newcommand{\appiv}[5]{\texttt{#1~#2~#3~#4~#5}}
+\newcommand{\paren}[1]{\texttt{(#1)}}
+\newcommand{\fundef}[3]{\texttt{#1~#2~=~#3}}
+\newcommand{\fundefii}[4]{\texttt{#1~#2~#3~=~#4}}
+\newcommand{\fundefiii}[5]{\texttt{#1~#2~#3~#4~=~#5}}
+
+% Typesetting CFGs and derivations:
+\newcommand{\nterm}[1]{$\mathit{#1}$}
+\newcommand{\term}[1]{\texttt{\textbf{#1}}}
+\newcommand{\metaterm}[1]{$\underline{\mathit{#1}}$}
+\newcommand{\yields}{$\to$}
+\newcommand{\alt}{\; $|$ \;}
+
+\newcommand{\dderives}{\Rightarrow}
+\newcommand{\dderivesIn}[1]{\underset{#1}{\Rightarrow}}
+\newcommand{\dderiveslm}{\underset{\mathit{lm}}{\Rightarrow}}
+\newcommand{\dderivesrm}{\underset{\mathit{rm}}{\Rightarrow}}
+\newcommand{\dderivesrmr}{\underset{\mathit{rm}}{\Leftarrow}}
+\newcommand{\derives}{\stackrel{*}{\Rightarrow}}
+\newcommand{\derivesIn}[1]{\stackrel{*}{\underset{#1}{\Rightarrow}}}
+\newcommand{\deriveslm}{\stackrel{*}{\underset{\mathit{lm}}{\Rightarrow}}}
+\newcommand{\derivesrm}{\stackrel{*}{\underset{\mathit{rm}}{\Rightarrow}}}
+
+
+% % Commands for typesetting EBNF and attribute grammars.
+% \newcommand{\ra}{$\rightarrow$}
+% \newcommand{\alt}{$\mid$ }
+% \newcommand{\opt}[1]{[ #1 ]}
+% \newcommand{\many}[1]{\{ #1 \}}
+% \newcommand{\manyp}[1]{\{ #1 \}$^{+}$}
+% \newcommand{\diff}[2]{#1\raisebox{-.6ex}{\small $\langle$#2$\rangle$}}
+% \newcommand{\nt}[1]{\textit{#1}}
+% \newcommand{\nti}[2]{\textit{#1}$^{#2}$}
+% \newcommand{\ntii}[3]{\textit{#1}$^{(#2,#3)}$}
+% \newcommand{\trm}[1]{\texttt{#1}}
+% \newcommand{\eq}{$=$}
+% \newcommand{\iattr}[2]{\nt{#1}$\downarrow$\textit{#2}}
+% \newcommand{\sattr}[2]{\nt{#1}$\uparrow$\textit{#2}}
+
+% % Including pictures.
+% \newcommand{\gpic}[1]{\mbox{\input{#1}\raise 1em\box\graph}}
+% \newcommand{\gpicbox}[1]{\fbox{\input{#1}\raise 1em\box\graph}}
+
+% % Figure X.Y (and table) in bold.
+% \makeatletter
+% \long\def\@makecaption#1#2{%
+%   \vskip\abovecaptionskip
+%   \sbox\@tempboxa{\textbf{#1}: #2}%
+%   \ifdim \wd\@tempboxa >\hsize
+%     \textbf{#1}: #2\par
+%   \else
+%     \global \@minipagefalse
+%     \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+%   \fi
+%   \vskip\belowcaptionskip}
+% \makeatother
