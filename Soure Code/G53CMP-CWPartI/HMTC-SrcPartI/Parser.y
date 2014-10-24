@@ -71,8 +71,9 @@ import Scanner
     WHILE	{ (While, $$) }
     REPEAT  { (Repeat, $$) }
     UNTIL   { (Until, $$) }
+    ELSIF   { (Elsif, $$)}
     LITINT	{ (LitInt {}, _) }
-    ID          { (Id {}, _) }
+    ID      { (Id {}, _) }
     '?'     { (Cond, $$) }
     '+'		{ (Op {opName="+"},   _) }
     '-'		{ (Op {opName="-"},   _) }
@@ -114,8 +115,8 @@ command
         { CmdAssign {caVar = $1, caVal=$3, cmdSrcPos = srcPos $1} }
     | var_expression '(' expressions ')'
         { CmdCall {ccProc = $1, ccArgs = $3, cmdSrcPos = srcPos $1} }
-    | IF expression THEN command ELSE command
-        { CmdIf {ciCond = $2, ciThen = $4, ciElse = $6, cmdSrcPos = $1} }
+    | IF expression THEN command elsIf oElse
+        { CmdIf {ciCond = $2, ciThen = $4, ciElsIf = $5, ciElse = $6, cmdSrcPos = $1} }
     | WHILE expression DO command
         { CmdWhile {cwCond = $2, cwBody = $4, cmdSrcPos = $1} }
     | REPEAT command UNTIL expression
@@ -129,6 +130,17 @@ command
 	      CmdSeq {csCmds = $2, cmdSrcPos = srcPos $2}
 	}
 
+-- Below 2 functions are custom helper functions for elsif and optional else
+
+elsIf :: {[(Expression, Command)]}
+elsIf : {[]}
+      | ELSIF expression THEN command elsIf -- ElsIf indicates recursion for more elsIf statements
+      {($2, $4): $5}
+
+oElse :: {Maybe Command}
+oElse : { Nothing }
+      | ELSE command 
+      {Just $2}
 
 expressions :: { [Expression] }
 expressions : expression { [$1] }

@@ -65,9 +65,6 @@ First all the grammars are extended to include the new loop construct
 \subsubsection{Abstract Syntax}
 \begin{center}
 \begin{tabular}{lcll}
-\nterm{Program} & \yields & \nterm{Command} & Program \\
-&&& \\
-
 \nterm{Command} & \yields & \nterm{Expression} \term{:=}
 			    \nterm{Expression}			& CmdAssign \\
 		& $|$	  & \nterm{Expression}
