@@ -131,16 +131,15 @@ command
 	}
 
 -- Below 2 functions are custom helper functions for elsif and optional else
-
+-- Haskell code is awlays in curly braces to extinguish itself from the grammar (helpful information for me)
 elsIf :: {[(Expression, Command)]}
 elsIf : {[]}
       | ELSIF expression THEN command elsIf -- ElsIf indicates recursion for more elsIf statements
-      {($2, $4): $5}
+      {($2, $4): $5} -- $2: expression, $4: command, $5: append more elsifs or empty list
 
 oElse :: {Maybe Command}
-oElse : { Nothing }
-      | ELSE command 
-      {Just $2}
+oElse : ELSE command {Just $2} -- matches our grammar and then gives the command back
+      | { Nothing } -- If doesn't match the above
 
 expressions :: { [Expression] }
 expressions : expression { [$1] }
