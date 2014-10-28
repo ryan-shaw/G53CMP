@@ -7,10 +7,9 @@ in
 		c := '\t';		
 		c := '\\';
 		c := '\'';
-
-		// Some normal characters
-		c := 'a';
+		// Non control chars
 		c := ' ';
-		c := '*';
-		c := '1'
+		c := '~';
+		c := '1';
+		c : = 'a'
 	end
