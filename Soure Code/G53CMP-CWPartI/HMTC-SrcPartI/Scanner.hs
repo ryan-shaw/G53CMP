@@ -30,7 +30,7 @@ module Scanner (
 ) where
 
 -- Standard library imports
-import Data.Char (isDigit, isAlpha, isAlphaNum)
+import Data.Char (isDigit, isAlpha, isAlphaNum, ord)
 
 -- HMTC module imports
 import SrcPos
@@ -114,14 +114,22 @@ scanner cont = P $ scan
                                            scan l (c + 1) s
         scanLitChar l c ('\\' : x : '\'' : s) =
             case enc x of
-                Just c1 -> retTkn (LitChar c1) l c (c + 4) s 
-                                                            -- (c + 4) updated position: +4 as \n' = 3 and we want string after that
+                Just c1 -> retTkn (LitChar c1) l c (c + 4) s -- (c + 4) updated position: +4 as \n' = 3 and we want string after that
                 Nothing -> do 
                     emitErrD (SrcPos l c) ("error") -- Change this error message
                     scan l (c + 4) s
+
         -- Next up need to check for non-control characters.
+        scanLitChar l c (x : '\'': s) 
+            | ord x >= 32 && ord x <= 126 = -- Include not / and '
+                retTkn (LitChar x) l c (c + 3) s
+            | otherwise = do
+                emitErrD (SrcPos l c) ("error")
+                scan l (c + 1) s
+
+
         scanLitChar l c s = do
-            emitErrD (SrcPos l c) ("errir")
+            emitErrD (SrcPos l c) ("error")
             scan l (c+1) s
 
         enc :: Char -> Maybe Char
