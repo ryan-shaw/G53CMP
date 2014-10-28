@@ -90,7 +90,7 @@ scanner cont = P $ scan
         -- Skip white space and comments, including handling various
         -- line ending conventions (NL, CR+NL, NL+CR) gracefully.
         scan l c ('\n' : s) = scan (l + 1) 1 s
-	scan l c ('\r' : s) = scan l 1 s
+        scan l c ('\r' : s) = scan l 1 s
         scan l c ('\t' : s) = scan l (nextTabStop c) s
         scan l c (' ' : s)  = scan l (c + 1) s
         scan l c ('/' : '/' : s) = scan l c (dropWhile (/='\n') s)
@@ -99,10 +99,12 @@ scanner cont = P $ scan
         scan l c (')' : s)  = retTkn RPar l c (c + 1) s
         scan l c (',' : s)  = retTkn Comma l c (c + 1) s
         scan l c (';' : s)  = retTkn Semicol l c (c + 1) s
+
+        scan l c ('\'' : s) = scanLitChar l c s
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
                          | isAlpha x = scanIdOrKwd l c x s
-			 | isOpChr x = scanOperator l c x s
+			             | isOpChr x = scanOperator l c x s
                          | otherwise = do
 				           emitErrD (SrcPos l c)
                                                     ("Lexical error: Illegal \
@@ -110,7 +112,25 @@ scanner cont = P $ scan
                                                      ++ show x
                                                      ++ " (discarded)")
                                            scan l (c + 1) s
+        scanLitChar l c ('\\' : x : '\'' : s) =
+            case enc x of
+                Just c1 -> retTkn (LitChar c1) l c (c + 4) s 
+                                                            -- (c + 4) updated position: +4 as \n' = 3 and we want string after that
+                Nothing -> do 
+                    emitErrD (SrcPos l c) ("error") -- Change this error message
+                    scan l (c + 4) s
+        -- Next up need to check for non-control characters.
+        scanLitChar l c s = do
+            emitErrD (SrcPos l c) ("errir")
+            scan l (c+1) s
 
+        enc :: Char -> Maybe Char
+        enc 'n' = Just '\n'
+        enc 'r' = Just '\r'
+        enc 't' = Just '\t'
+        enc '\\' = Just '\\'
+        enc '\'' = Just '\''
+        enc _ = Nothing
 
         -- scanLitInt :: Int -> Int -> Char -> String -> D a
         scanLitInt l c x s = retTkn (LitInt (read (x : tail))) l c c' s'

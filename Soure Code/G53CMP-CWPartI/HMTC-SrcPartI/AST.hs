@@ -95,7 +95,7 @@ data Command
       	  ciCond    :: Expression,	-- ^ Condition
       	  ciThen    :: Command,		-- ^ Then-branch
           ciElsIf   :: [(Expression, Command)], -- A set because potential for multiple elsif's 
-      	  ciElse    :: Maybe Command,		-- ^ Else-branch, adding maybe either returns nothing or a command
+      	  ciElse    :: Maybe Command,		-- ^ Else-branch, adding maybe either returns nothing or a command, allows optional else
           cmdSrcPos :: SrcPos
       }
     -- | While-loop
@@ -127,6 +127,10 @@ data Expression
     = ExpLitInt {
 	   eliVal    :: Integer,		-- ^ Integer value
 	   expSrcPos :: SrcPos
+    }
+    | ExpLitChar {
+      elcVal   :: Char, -- ^ Char value
+      expSrcPos :: SrcPos
     }
     -- | Variable reference
     | ExpVar {
