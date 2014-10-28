@@ -125,26 +125,26 @@ instance HasSrcPos Command where
 data Expression
     -- | Literal integer
     = ExpLitInt {
-	  eliVal    :: Integer,		-- ^ Integer value
-	  expSrcPos :: SrcPos
-      }
+	   eliVal    :: Integer,		-- ^ Integer value
+	   expSrcPos :: SrcPos
+    }
     -- | Variable reference
     | ExpVar {
-	  evVar     :: Name,		-- ^ Name of referenced variable
-	  expSrcPos :: SrcPos
-      }
+	   evVar     :: Name,		-- ^ Name of referenced variable
+	   expSrcPos :: SrcPos
+    }
     -- | Function or n-ary operator application
     | ExpApp {
-	  eaFun     :: Expression,	-- ^ Applied function or operator
-          eaArgs    :: [Expression],	-- ^ Arguments
-	  expSrcPos :: SrcPos
-      }
+	   eaFun     :: Expression,	-- ^ Applied function or operator
+     eaArgs    :: [Expression],	-- ^ Arguments
+	   expSrcPos :: SrcPos
+    }
     | ExpCond {
-        ecBool :: Expression,
-        ecExp1 :: Expression,
-        ecExp2 :: Expression,
-        expSrcPos :: SrcPos
-      }
+      ecBool :: Expression,
+      ecExp1 :: Expression,
+      ecExp2 :: Expression,
+      expSrcPos :: SrcPos
+    }
 
 
 instance HasSrcPos Expression where
