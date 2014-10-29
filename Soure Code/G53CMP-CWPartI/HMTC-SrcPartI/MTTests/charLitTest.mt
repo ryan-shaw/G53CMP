@@ -9,7 +9,7 @@ in
 		c := '\'';
 		// Non control chars
 		c := ' ';
-		c := '\';
+		c := '~';
 		c := '1';
 		c := 'a'
 	end

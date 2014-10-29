@@ -1,7 +1,5 @@
-// This is a comment.  It continues to the end of the line.
-let
-    var d2: Integer
-in
-    begin
-        d2 := true ? true : false
-    end
+begin
+    d2 := true ? true : false;
+    e := e1 ? e2 : e3 ? e4 : e5
+    // Should be parsed as e1 ? (e2 ? e3 : e4) : e5
+end
