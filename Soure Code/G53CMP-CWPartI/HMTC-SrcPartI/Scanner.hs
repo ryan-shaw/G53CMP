@@ -100,11 +100,12 @@ scanner cont = P $ scan
         scan l c (',' : s)  = retTkn Comma l c (c + 1) s
         scan l c (';' : s)  = retTkn Semicol l c (c + 1) s
 
-        scan l c ('\'' : s) = scanLitChar l c s
+        --scan l c ('\'' : s) = scanLitChar l c s
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
                          | isAlpha x = scanIdOrKwd l c x s
 			             | isOpChr x = scanOperator l c x s
+                         | isLitChar x = scanLitChar l c s
                          | otherwise = do
 				           emitErrD (SrcPos l c)
                                                     ("Lexical error: Illegal \
@@ -112,33 +113,39 @@ scanner cont = P $ scan
                                                      ++ show x
                                                      ++ " (discarded)")
                                            scan l (c + 1) s
+        isLitChar :: Char -> Bool
+        isLitChar x
+            | x /= '\'' = False
+            | otherwise = True
+            
+        -- The below function pattern matches \x then a case check for \n,\r,\t,\\,\'
         scanLitChar l c ('\\' : x : '\'' : s) =
-            case enc x of
+            case toLit x of
                 Just c1 -> retTkn (LitChar c1) l c (c + 4) s -- (c + 4) updated position: +4 as \n' = 3 and we want string after that
                 Nothing -> do 
-                    emitErrD (SrcPos l c) ("error") -- Change this error message
+                    emitErrD (SrcPos l c) ("Lexical error: Illegal character " ++ show x ++ " (discarded)")
                     scan l (c + 4) s
 
-        -- Next up need to check for non-control characters.
+        -- Check for non-control characters.
         scanLitChar l c (x : '\'': s) 
-            | ord x >= 32 && ord x <= 126 = -- Include not / and '
+            | x /= '\\' && x /= '\'' && ord x >= 32 && ord x <= 126 = -- Check valid printable char, and not \ or '
                 retTkn (LitChar x) l c (c + 3) s
             | otherwise = do
-                emitErrD (SrcPos l c) ("error")
+                emitErrD (SrcPos l c) ("Lexical error: Illegal character " ++ show x ++ " (discarded)") -- Not printable, \ or '
                 scan l (c + 1) s
 
 
         scanLitChar l c s = do
-            emitErrD (SrcPos l c) ("error")
+            emitErrD (SrcPos l c) ("Lexical error: Not valid character literal")
             scan l (c+1) s
 
-        enc :: Char -> Maybe Char
-        enc 'n' = Just '\n'
-        enc 'r' = Just '\r'
-        enc 't' = Just '\t'
-        enc '\\' = Just '\\'
-        enc '\'' = Just '\''
-        enc _ = Nothing
+        toLit :: Char -> Maybe Char
+        toLit 'n' = Just '\n'
+        toLit 'r' = Just '\r'
+        toLit 't' = Just '\t'
+        toLit '\\' = Just '\\'
+        toLit '\'' = Just '\''
+        toLit _ = Nothing
 
         -- scanLitInt :: Int -> Int -> Char -> String -> D a
         scanLitInt l c x s = retTkn (LitInt (read (x : tail))) l c c' s'

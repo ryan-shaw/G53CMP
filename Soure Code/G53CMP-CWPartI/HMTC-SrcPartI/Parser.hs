@@ -23,154 +23,154 @@ import Control.Applicative(Applicative(..))
 
 -- parser produced by Happy Version 1.19.4
 
-newtype HappyAbsSyn t16 t18 t20 t23 = HappyAbsSyn HappyAny
+newtype HappyAbsSyn t8 t16 t18 t20 t23 = HappyAbsSyn HappyAny
 
 type HappyAny = Happy_GHC_Exts.Any
 
 
 
-happyIn4 :: (AST) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn4 :: (AST) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn4 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn4 #-}
-happyOut4 :: (HappyAbsSyn t16 t18 t20 t23) -> (AST)
+happyOut4 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (AST)
 happyOut4 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut4 #-}
-happyIn5 :: ([Command]) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn5 :: ([Command]) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn5 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn5 #-}
-happyOut5 :: (HappyAbsSyn t16 t18 t20 t23) -> ([Command])
+happyOut5 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> ([Command])
 happyOut5 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut5 #-}
-happyIn6 :: (Command) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn6 :: (Command) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn6 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn6 #-}
-happyOut6 :: (HappyAbsSyn t16 t18 t20 t23) -> (Command)
+happyOut6 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Command)
 happyOut6 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut6 #-}
-happyIn7 :: ([(Expression, Command)]) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn7 :: ([(Expression, Command)]) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn7 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn7 #-}
-happyOut7 :: (HappyAbsSyn t16 t18 t20 t23) -> ([(Expression, Command)])
+happyOut7 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> ([(Expression, Command)])
 happyOut7 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut7 #-}
-happyIn8 :: (Maybe Command) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn8 :: t8 -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn8 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn8 #-}
-happyOut8 :: (HappyAbsSyn t16 t18 t20 t23) -> (Maybe Command)
+happyOut8 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> t8
 happyOut8 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut8 #-}
-happyIn9 :: ([Expression]) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn9 :: ([Expression]) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn9 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn9 #-}
-happyOut9 :: (HappyAbsSyn t16 t18 t20 t23) -> ([Expression])
+happyOut9 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> ([Expression])
 happyOut9 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut9 #-}
-happyIn10 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn10 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn10 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn10 #-}
-happyOut10 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut10 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut10 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut10 #-}
-happyIn11 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn11 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn11 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn11 #-}
-happyOut11 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut11 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut11 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut11 #-}
-happyIn12 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn12 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn12 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn12 #-}
-happyOut12 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut12 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut12 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut12 #-}
-happyIn13 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn13 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn13 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn13 #-}
-happyOut13 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut13 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut13 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut13 #-}
-happyIn14 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn14 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn14 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn14 #-}
-happyOut14 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut14 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut14 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut14 #-}
-happyIn15 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn15 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn15 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn15 #-}
-happyOut15 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut15 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut15 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut15 #-}
-happyIn16 :: t16 -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn16 :: t16 -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn16 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn16 #-}
-happyOut16 :: (HappyAbsSyn t16 t18 t20 t23) -> t16
+happyOut16 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> t16
 happyOut16 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut16 #-}
-happyIn17 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn17 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn17 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn17 #-}
-happyOut17 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut17 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut17 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut17 #-}
-happyIn18 :: t18 -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn18 :: t18 -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn18 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn18 #-}
-happyOut18 :: (HappyAbsSyn t16 t18 t20 t23) -> t18
+happyOut18 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> t18
 happyOut18 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut18 #-}
-happyIn19 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn19 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn19 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn19 #-}
-happyOut19 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut19 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut19 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut19 #-}
-happyIn20 :: t20 -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn20 :: t20 -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn20 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn20 #-}
-happyOut20 :: (HappyAbsSyn t16 t18 t20 t23) -> t20
+happyOut20 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> t20
 happyOut20 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut20 #-}
-happyIn21 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn21 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn21 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn21 #-}
-happyOut21 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut21 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut21 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut21 #-}
-happyIn22 :: (Expression) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn22 :: (Expression) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn22 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn22 #-}
-happyOut22 :: (HappyAbsSyn t16 t18 t20 t23) -> (Expression)
+happyOut22 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Expression)
 happyOut22 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut22 #-}
-happyIn23 :: t23 -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn23 :: t23 -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn23 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn23 #-}
-happyOut23 :: (HappyAbsSyn t16 t18 t20 t23) -> t23
+happyOut23 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> t23
 happyOut23 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut23 #-}
-happyIn24 :: ([Declaration]) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn24 :: ([Declaration]) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn24 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn24 #-}
-happyOut24 :: (HappyAbsSyn t16 t18 t20 t23) -> ([Declaration])
+happyOut24 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> ([Declaration])
 happyOut24 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut24 #-}
-happyIn25 :: (Declaration) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn25 :: (Declaration) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn25 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn25 #-}
-happyOut25 :: (HappyAbsSyn t16 t18 t20 t23) -> (Declaration)
+happyOut25 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (Declaration)
 happyOut25 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut25 #-}
-happyIn26 :: (TypeDenoter) -> (HappyAbsSyn t16 t18 t20 t23)
+happyIn26 :: (TypeDenoter) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyIn26 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyIn26 #-}
-happyOut26 :: (HappyAbsSyn t16 t18 t20 t23) -> (TypeDenoter)
+happyOut26 :: (HappyAbsSyn t8 t16 t18 t20 t23) -> (TypeDenoter)
 happyOut26 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut26 #-}
-happyInTok :: ((Token, SrcPos)) -> (HappyAbsSyn t16 t18 t20 t23)
+happyInTok :: ((Token, SrcPos)) -> (HappyAbsSyn t8 t16 t18 t20 t23)
 happyInTok x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyInTok #-}
-happyOutTok :: (HappyAbsSyn t16 t18 t20 t23) -> ((Token, SrcPos))
+happyOutTok :: (HappyAbsSyn t8 t16 t18 t20 t23) -> ((Token, SrcPos))
 happyOutTok x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOutTok #-}
 

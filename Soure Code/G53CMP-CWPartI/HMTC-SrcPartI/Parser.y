@@ -138,7 +138,6 @@ elsIf : ELSIF expression THEN command elsIf {($2, $4): $5} -- ElsIf indicates re
       | {[]} 
 -- $2: expression, $4: command, $5: append more elsifs or empty list
 
-oElse :: {Maybe Command}
 oElse : ELSE command {Just $2} -- matches our grammar and then gives the command back
       | { Nothing } -- If doesn't match the above
 
