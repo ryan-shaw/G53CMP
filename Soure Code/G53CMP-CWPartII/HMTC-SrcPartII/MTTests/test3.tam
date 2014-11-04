@@ -1,0 +1,56 @@
+        LOADL       0                   
+        LOADL       2                   
+        LOADL       0                   
+        LOADL       1                   
+        LOADA       [SB + 2]            
+        LOADL       0                   
+        LOADCA      #0_p                
+        CALLI                           
+        LOAD        [SB + 2]            
+        LOADL       0                   
+        LOADCA      putint              
+        CALLI                           
+        POP         0 3                 
+        HALT                            
+#1_f:
+        LOAD        [LB - 2]            
+        LOAD        [LB - 2]            
+        LOADL       0                   
+        LOADCA      mul                 
+        CALLI                           
+        LOAD        [LB - 1]            
+        LOAD        [LB - 1]            
+        LOADL       0                   
+        LOADCA      mul                 
+        CALLI                           
+        LOADL       0                   
+        LOADCA      add                 
+        CALLI                           
+        RETURN      1 2                 
+#0_p:
+        LOAD        [LB - 2]            
+        LOADL       1000                
+        LOADL       0                   
+        LOADCA      lt                  
+        CALLI                           
+        JUMPIFZ     #2                  
+        LOAD        [LB - 2]            
+        LOADL       0                   
+        LOADCA      putint              
+        CALLI                           
+        LOAD        [LB - 2]            
+        LOAD        [SB + 1]            
+        LOADL       0                   
+        LOADCA      #1_f                
+        CALLI                           
+        LOAD        [LB - 1]            
+        LOADL       0                   
+        LOADCA      #0_p                
+        CALLI                           
+        JUMP        #3                  
+#2:
+        LOAD        [LB - 2]            
+        LOAD        [LB - 1]            
+        STOREI      0                   
+#3:
+        RETURN      0 2                 

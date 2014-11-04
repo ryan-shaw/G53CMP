@@ -1,0 +1,28 @@
+        LOADL       2                   
+        LOADL       0                   
+        LOADL       0                   
+        LOADL       1                   
+        STORE       [SB + 1]            
+        LOADL       1                   
+        STORE       [SB + 2]            
+        JUMP        #1                  
+#0:
+        LOAD        [SB + 2]            
+        CALL        putint              
+        LOAD        [SB + 1]            
+        LOAD        [SB + 0]            
+        CALL        add                 
+        STORE       [SB + 1]            
+        LOAD        [SB + 2]            
+        LOAD        [SB + 1]            
+        CALL        add                 
+        STORE       [SB + 2]            
+#1:
+        LOAD        [SB + 2]            
+        LOADL       25                  
+        LOADL       1                   
+        CALL        add                 
+        CALL        lt                  
+        JUMPIFNZ    #0                  
+        POP         0 3                 
+        HALT                            

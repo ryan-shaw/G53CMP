@@ -5,7 +5,7 @@
 -- *	Purpose:	MiniTriangle parser				     *
 -- *	Authors:	Henrik Nilsson					     *
 -- *									     *
--- *               Copyright (c) Henrik Nilsson, 2006 - 2012                 *
+-- *               Copyright (c) Henrik Nilsson, 2006 - 2014                 *
 -- *									     *
 -- ***************************************************************************
 
@@ -13,7 +13,7 @@
 -- | MiniTriangle parser
 
 module Parser (
-    parse,		-- :: String -> D AST
+    parse,		-- :: String -> DF AST
     testParser		-- :: String -> IO ()
 ) where
 
@@ -53,29 +53,37 @@ import Scanner
 %token
     '('		{ (LPar, $$) }
     ')'		{ (RPar, $$) }
+    '['		{ (LBrk, $$) }
+    ']'		{ (RBrk, $$) }
+    '{'         { (LBrc, $$) }
+    '}'         { (RBrc, $$) }
     ','         { (Comma, $$) }
+    '.'         { (Period, $$) }
     ';'		{ (Semicol, $$) }
     ':'		{ (Colon, $$) }
     ':='	{ (ColEq, $$) }
     '='		{ (Equals, $$) }
+    '?'		{ (Cond, $$) }
     BEGIN	{ (Begin, $$) }
     CONST	{ (Const, $$) }
     DO		{ (Do, $$) }
     ELSE	{ (Else, $$) }
+    ELSIF	{ (Elsif, $$) }
     END		{ (End, $$) }
+    FUN		{ (Fun, $$) }
     IF		{ (If, $$) }
     IN		{ (In, $$) }
     LET		{ (Let, $$) }
+    OUT		{ (Out, $$) }
+    PROC	{ (Proc, $$) }
+    REPEAT	{ (Repeat, $$) }
     THEN	{ (Then, $$) }
+    UNTIL	{ (Until, $$) }
     VAR		{ (Var, $$) }
     WHILE	{ (While, $$) }
-    REPEAT  { (Repeat, $$) }
-    UNTIL   { (Until, $$) }
-    ELSIF   { (Elsif, $$)}
     LITINT	{ (LitInt {}, _) }
-    LITCHAR { (LitChar {}, _) }
-    ID      { (Id {}, _) }
-    '?'     { (Cond, $$) }
+    LITCHR	{ (LitChr {}, _) }
+    ID          { (Id {}, _) }
     '+'		{ (Op {opName="+"},   _) }
     '-'		{ (Op {opName="-"},   _) }
     '*'		{ (Op {opName="*"},   _) }
@@ -91,13 +99,13 @@ import Scanner
     '||'	{ (Op {opName="||"},  _) }
     '!'		{ (Op {opName="!"},   _) }
 
+%right '?' ':'
 %left '||'
 %left '&&'
 %nonassoc '<' '<=' '==' '!=' '>=' '>'
 %left '+' '-'
 %left '*' '/'
 %right '^'
-%right '?' ':'
 
 %%
 
@@ -116,12 +124,12 @@ command
         { CmdAssign {caVar = $1, caVal=$3, cmdSrcPos = srcPos $1} }
     | var_expression '(' expressions ')'
         { CmdCall {ccProc = $1, ccArgs = $3, cmdSrcPos = srcPos $1} }
-    | IF expression THEN command elsIf oElse
-        { CmdIf {ciCond = $2, ciThen = $4, ciElsIf = $5, ciElse = $6, cmdSrcPos = $1} }
+    | IF expression THEN command elsifs optelse
+        { CmdIf {ciCondThens = ($2,$4) : $5, ciMbElse = $6, cmdSrcPos = $1} }
     | WHILE expression DO command
         { CmdWhile {cwCond = $2, cwBody = $4, cmdSrcPos = $1} }
     | REPEAT command UNTIL expression
-        { CmdRepeat {crCond = $4, crBody = $2, cmdSrcPos = $1} }
+  	{ CmdRepeat {crBody = $2, crCond = $4, cmdSrcPos = $1} }
     | LET declarations IN command
         { CmdLet {clDecls = $2, clBody = $4, cmdSrcPos = $1} }
     | BEGIN commands END
@@ -131,18 +139,28 @@ command
 	      CmdSeq {csCmds = $2, cmdSrcPos = srcPos $2}
 	}
 
--- Below 2 functions are custom helper functions for elsif and optional else
--- Haskell code is awlays in curly braces to extinguish itself from the grammar (helpful information for me)
-elsIf : ELSIF expression THEN command elsIf {($2, $4): $5} -- ElsIf indicates recursion for more elsIf statements
-      | {[]} 
--- $2: expression, $4: command, $5: append more elsifs or empty list
+optelse :: { Maybe Command }
+optelse : {- epsilon -}
+           { Nothing }
+        | ELSE command
+           { Just $2 }
 
-oElse : ELSE command {Just $2} -- matches our grammar and then gives the command back
-      | { Nothing } -- If doesn't match the above
+
+elsifs :: { [(Expression, Command)] }
+elsifs : {- epsilon -}
+           { [] }
+       | ELSIF expression THEN command elsifs
+           { ($2,$4) : $5 }
+
 
 expressions :: { [Expression] }
-expressions : expression { [$1] }
-            | expression ',' expressions { $1 : $3 }
+expressions : {- epsilon -} { [] }
+            | expressions1 { $1 } 
+
+
+expressions1 :: { [Expression] }
+expressions1 : expression { [$1] }
+             | expression ',' expressions { $1 : $3 }
 
 
 -- The terminal associated with a precedence declaration has to occur
@@ -161,6 +179,11 @@ expression :: { Expression }
 expression
     : primary_expression
         { $1 }
+    | expression '?' expression ':' expression
+	{ ExpCond {ecCond    = $1,
+                   ecTrue    = $3,
+                   ecFalse   = $5,
+                   expSrcPos = srcPos $1} } 
     | expression opclass_disjunctive expression %prec '||'
 	{ ExpApp {eaFun     = $2,
                   eaArgs    = [$1,$3],
@@ -185,38 +208,44 @@ expression
 	{ ExpApp {eaFun     = $2,
                   eaArgs    = [$1,$3],
                   expSrcPos = srcPos $1} }
-    | expression '?' expression ':' expression %prec '?'
-    { ExpCond { ecBool = $1,
-                  ecExp1 = $3,
-                  ecExp2 = $5,
-                  expSrcPos = srcPos $1} }
 
 
 primary_expression :: { Expression }
     : LITINT
         { ExpLitInt {eliVal = tspLIVal $1, expSrcPos = tspSrcPos $1} }
-    | LITCHAR
-        { ExpLitChar {elcVal = tspLCVal $1, expSrcPos = tspSrcPos $1} }
+    | LITCHR
+        { ExpLitChr {elcVal = tspLCVal $1, expSrcPos = tspSrcPos $1} }
     | var_expression
         { $1 }
     | opclass_unary primary_expression
 	{ ExpApp {eaFun = $1, eaArgs = [$2], expSrcPos = srcPos $1}}
+    | var_expression '(' expressions ')'
+        { ExpApp {eaFun = $1, eaArgs = $3, expSrcPos = srcPos $1} }
+    | '[' expressions ']'
+        { ExpAry {eaElts = $2, expSrcPos = $1} }
+    | '{' field_defs '}'
+        { ExpRcd {erFldDefs = $2, expSrcPos = $1} }
     | '(' expression ')'
         { $2 }
 
 
--- Variables being assigned to, procedures being called, and functions being
--- applied (currently only operators) are restricted to be denoted by simple
--- identifiers or operators in the current MiniTriangle grammar. However, a
--- indicated by the non-terminal VarExpression, this could be generalized.
--- For example, if arrays were introduced, another form of variable would be
--- an array element which might be denoted by, say, x[i]. This would thus be
--- another form of variable expression. For that reason, variables, procedures,
--- and functions are represented as expressions in the abstract syntax.
--- denoted by operators) are also represented as expressions.
+-- Syntactically limited form of expressions for variables, procedures,
+-- and functions. Facilitates parsing and rules out certain unsupported
+-- constructs already syntactically (would otherwise be caught by the type
+-- checker; e.g. (f(x))(y) not possible because no support for returning
+-- functions). Still, convenient to represent by an expression in the
+-- abstract syntax. Also indexing of array expressions or projection of
+-- record expressions (e.g. [1,2,3][1] or {a = 1}.a) not permitted as
+-- indexing/projecting on references simplifies the type system and as there
+-- is little point i supporting this anyway (in particular the latter).
 
 var_expression :: { Expression }
-    : ID { ExpVar {evVar = tspIdName $1, expSrcPos = tspSrcPos $1} }
+    : ID
+        { ExpVar {evVar = tspIdName $1, expSrcPos = tspSrcPos $1} }
+    | var_expression '[' expression ']'
+        { ExpIx {eiAry = $1, eiIx = $3, expSrcPos = srcPos $1} }
+    | var_expression '.' ID
+        { ExpPrj {epRcd = $1, epFld = tspIdName $3, expSrcPos = srcPos $1} }
 
 
 opclass_disjunctive :: { Expression }
@@ -261,6 +290,22 @@ unary_op
     | '-'  { $1 }
 
 
+field_defs :: { [(Name, Expression)] }
+field_defs : {- epsilon -} { [] }
+           | field_defs1   { $1 } 
+
+
+field_defs1 :: { [(Name, Expression)] }
+field_defs1 : field_def                { [$1] }
+            | field_def ',' field_defs { $1 : $3 }
+
+
+field_def :: { (Name, Expression) }
+field_def
+    : ID '=' expression
+        { (tspIdName $1, $3) }
+
+
 declarations :: { [Declaration] }
 declarations
     : declaration
@@ -280,11 +325,71 @@ declaration
     | VAR ID ':' type_denoter ':=' expression
         { DeclVar {dvVar = tspIdName $2, dvType = $4, dvMbVal = Just $6,
           declSrcPos = $1} }
+    | FUN ID '(' arg_decls ')' ':' type_denoter '=' expression
+	{ DeclFun {dfFun = tspIdName $2, dfArgDecls = $4, dfType = $7,
+                   dfBody = $9, declSrcPos = $1} }
+    | PROC ID '(' arg_decls ')' command
+	{ DeclProc {dpProc = tspIdName $2, dpArgDecls = $4, dpBody = $6,
+                    declSrcPos = $1} }
+
+
+arg_decls :: { [ArgDecl] }
+arg_decls
+    : {- epsilon -}
+        { [] }
+    | arg_decls1
+        { $1 }
+
+
+arg_decls1 :: { [ArgDecl] }
+arg_decls1
+    : arg_decl
+        { [$1] }
+    | arg_decl ',' arg_decls1
+        { $1 : $3 }
+
+
+arg_decl :: { ArgDecl }
+arg_decl
+    : ID ':' type_denoter
+        { ArgDecl {adArg = tspIdName $1, adArgMode = ByValue, adType = $3,
+                   adSrcPos = tspSrcPos $1} }
+    | IN ID ':' type_denoter
+        { ArgDecl {adArg = tspIdName $2, adArgMode = ByRefIn, adType = $4,
+                   adSrcPos = $1} }
+    | OUT ID ':' type_denoter
+        { ArgDecl {adArg = tspIdName $2, adArgMode = ByRefOut, adType = $4,
+                   adSrcPos = $1} }
+    | VAR ID ':' type_denoter
+        { ArgDecl {adArg = tspIdName $2, adArgMode = ByRefVar, adType = $4,
+                   adSrcPos = $1} }
 
 
 type_denoter :: { TypeDenoter }
-type_denoter : ID	{ TDBaseType {tdbtName = tspIdName $1,
-                                      tdSrcPos = tspSrcPos $1} }
+type_denoter
+    : ID
+        { TDBaseType { tdbtName = tspIdName $1, tdSrcPos = tspSrcPos $1 } }
+    | type_denoter '[' LITINT ']'
+        { TDArray { tdaEltType = $1, tdaSize = tspLIVal $3,
+                    tdSrcPos = srcPos $1 } }
+    | '{' field_types '}'
+        { TDRecord { tdrFldTypes = $2, tdSrcPos = $1 } }
+
+
+field_types :: { [(Name, TypeDenoter)] }
+field_types : {- epsilon -} { [] }
+            | field_types1   { $1 } 
+
+
+field_types1 :: { [(Name, TypeDenoter)] }
+field_types1 : field_type                { [$1] }
+             | field_type ',' field_types1 { $1 : $3 }
+
+
+field_type :: { (Name, TypeDenoter) }
+field_type
+    : ID ':' type_denoter
+        { (tspIdName $1, $3) }
 
 
 {
@@ -296,7 +401,7 @@ happyError = failP "Parse error"
 -- | Parses a MiniTriangle program, building an AST representation of it
 -- if successful.
 
-parse :: String -> D AST
+parse :: String -> DF AST
 parse = runP parseAux
 
 
@@ -310,9 +415,11 @@ tspLIVal :: (Token,SrcPos) -> Integer
 tspLIVal (LitInt {liVal = n}, _) = n
 tspLIVal _ = parserErr "tspLIVal" "Not a LitInt"
 
+
 tspLCVal :: (Token,SrcPos) -> Char
-tspLCVal (LitChar {lcVal = c}, _) = c
-tspLCVal _ = parserErr "tspLCVal" "Not a LitChar"
+tspLCVal (LitChr {lcVal = c}, _) = c
+tspLCVal _ = parserErr "tspLCVal" "Not a LitChr"
+
 
 tspIdName :: (Token,SrcPos) -> Name
 tspIdName (Id {idName = nm}, _) = nm
@@ -359,7 +466,7 @@ testParser s = do
     putStrLn ""
     where
         result :: (Maybe AST, [DMsg])
-        result = runD (parse s)
+        result = runDF (parse s)
 
 
 parserErr :: String -> String -> a

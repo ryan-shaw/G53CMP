@@ -1,0 +1,138 @@
+        LOADL       0                   
+        LOADL       1                   
+        LOADL       4                   
+        LOADL       0                   
+        LOADA       [SB + 1]            
+        LOADA       [SB + 3]            
+        LOADL       0                   
+        LOADCA      #0_p                
+        CALLI                           
+        LOAD        [SB + 3]            
+        LOADL       0                   
+        LOADCA      putint              
+        CALLI                           
+        POP         0 4                 
+        HALT                            
+#1_f:
+        LOAD        [LB - 2]            
+        LOAD        [LB - 2]            
+        LOADL       0                   
+        LOADCA      mul                 
+        CALLI                           
+        LOAD        [LB - 1]            
+        LOAD        [LB - 1]            
+        LOADL       0                   
+        LOADCA      mul                 
+        CALLI                           
+        LOADL       0                   
+        LOADCA      add                 
+        CALLI                           
+        RETURN      1 2                 
+#0_p:
+        LOADL       1                   
+        LOADL       6                   
+        LOADL       7                   
+        LOAD        [LB - 2]            
+        LOADI       0                   
+        LOADL       1000                
+        LOADL       0                   
+        LOADCA      lt                  
+        CALLI                           
+        LOADA       [LB + 0]            
+        LOADCA      #2_readT            
+        CALLI                           
+        LOADL       0                   
+        LOADCA      and                 
+        CALLI                           
+        JUMPIFZ     #4                  
+        LOAD        [LB - 2]            
+        LOADA       [LB + 0]            
+        LOADCA      #6_putint2          
+        CALLI                           
+        LOAD        [LB - 2]            
+        LOADI       0                   
+        LOAD        [SB + 2]            
+        LOADA       [LB + 0]            
+        LOADCA      #3_foo              
+        CALLI                           
+        LOADL       0                   
+        LOADCA      #1_f                
+        CALLI                           
+        LOADA       [LB + 6]            
+        LOAD        [LB - 1]            
+        LOADL       0                   
+        LOADCA      #0_p                
+        CALLI                           
+        POP         0 1                 
+        JUMP        #5                  
+#4:
+        LOAD        [LB - 2]            
+        LOADI       0                   
+        LOAD        [LB - 1]            
+        STOREI      0                   
+#5:
+        POP         0 3                 
+        RETURN      0 2                 
+#6_putint2:
+        LOAD        [LB - 1]            
+        LOADI       0                   
+        LOADL       3                   
+        LOAD        [LB - 1]            
+        LOADI       0                   
+        LOADL       0                   
+        LOADCA      putint              
+        CALLI                           
+        LOAD        [LB + 3]            
+        LOADL       0                   
+        LOADCA      putint              
+        CALLI                           
+        LOADL       2                   
+        LOADA       [LB + 0]            
+        LOADCA      #7_fie              
+        CALLI                           
+        LOADL       0                   
+        LOADCA      putint              
+        CALLI                           
+        LOADL       105                 
+        LOAD        [LB + 5]            
+        LOADA       [LB + 0]            
+        LOADCA      #8_q                
+        CALLI                           
+        POP         0 3                 
+        RETURN      0 1                 
+#8_q:
+        LOAD        [LB - 1]            
+        LOAD        [LB + 0]            
+        LOADI       0                   
+        LOADCA      #3_foo              
+        CALLI                           
+        LOADL       0                   
+        LOADCA      putint              
+        CALLI                           
+        RETURN      0 1                 
+#7_fie:
+        LOAD        [LB - 1]            
+        LOAD        [LB + 0]            
+        LOADI       0                   
+        LOADI       5                   
+        LOADL       0                   
+        LOADCA      mul                 
+        CALLI                           
+        LOAD        [LB + 0]            
+        LOADI       4                   
+        LOADL       0                   
+        LOADCA      mul                 
+        CALLI                           
+        RETURN      1 1                 
+#3_foo:
+        LOAD        [LB - 1]            
+        LOAD        [LB + 0]            
+        LOADI       4                   
+        LOADL       0                   
+        LOADCA      sub                 
+        CALLI                           
+        RETURN      1 1                 
+#2_readT:
+        LOAD        [LB + 0]            
+        LOADI       3                   
+        RETURN      1 0                 

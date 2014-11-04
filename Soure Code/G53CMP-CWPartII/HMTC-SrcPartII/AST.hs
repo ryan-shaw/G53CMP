@@ -6,7 +6,7 @@
 *	Purpose:	MiniTriangle Abstract Syntax Tree		     *
 *	Authors:	Henrik Nilsson					     *
 *									     *
-*                 Copyright (c) Henrik Nilsson, 2006 - 2012                  *
+*                 Copyright (c) Henrik Nilsson, 2006 - 2014                  *
 *									     *
 ******************************************************************************
 -}
@@ -19,7 +19,9 @@ module AST (
     Command (..),	-- Not abstract. Instances: HasSrcPos.
     Expression (..),	-- Not abstract. Instances: HasSrcPos.
     Declaration (..),	-- Not abstract. Instances: HasSrcPos.
-    TypeDenoter (..)	-- Not abstract. Instances: HasSrcPos.
+    TypeDenoter (..),	-- Not abstract. Instances: HasSrcPos.
+    ArgDecl (..),	-- Not abstract. Instances: HasSrcPos.
+    ArgMode (..)	-- Not abstract. Instances: Eq, Show.
 ) where
 
 -- HMTC module imports
@@ -92,29 +94,29 @@ data Command
       }
     -- | Conditional command
     | CmdIf {
-      	  ciCond    :: Expression,	-- ^ Condition
-      	  ciThen    :: Command,		-- ^ Then-branch
-          ciElsIf   :: [(Expression, Command)], -- A set because potential for multiple elsif's 
-      	  ciElse    :: Maybe Command,		-- ^ Else-branch, adding maybe either returns nothing or a command, allows optional else
-          cmdSrcPos :: SrcPos
+          ciCondThens :: [(Expression,
+                           Command)], 	-- ^ Conditional branches
+	  ciMbElse    :: Maybe Command,	-- ^ Optional else-branch
+          cmdSrcPos   :: SrcPos
       }
     -- | While-loop
     | CmdWhile {
           cwCond    :: Expression,	-- ^ Loop-condition
           cwBody    :: Command,		-- ^ Loop-body
-          cmdSrcPos :: SrcPos
+	  cmdSrcPos :: SrcPos
+      }
+    -- | Repeat-loop
+    | CmdRepeat {
+          crBody    :: Command,		-- ^ Loop-body
+          crCond    :: Expression,	-- ^ Loop-condition
+	  cmdSrcPos :: SrcPos
       }
     -- | Let-command
     | CmdLet {
           clDecls   :: [Declaration],	-- ^ Declarations
           clBody    :: Command,		-- ^ Let-body
-	        cmdSrcPos :: SrcPos
+	  cmdSrcPos :: SrcPos
       }
-    | CmdRepeat {
-          crCond  :: Expression, -- ^ Loop condition
-          crBody  :: Command,  -- ^ Loop body
-          cmdSrcPos :: SrcPos
-    }
 
 
 instance HasSrcPos Command where
@@ -125,31 +127,54 @@ instance HasSrcPos Command where
 data Expression
     -- | Literal integer
     = ExpLitInt {
-	   eliVal    :: Integer,		-- ^ Integer value
-	   expSrcPos :: SrcPos
-    }
+	  eliVal    :: Integer,		-- ^ Integer value
+	  expSrcPos :: SrcPos
+      }
     -- | Literal character
-    | ExpLitChar {
-      elcVal   :: Char, -- ^ Char value
-      expSrcPos :: SrcPos
-    }
+    | ExpLitChr {
+	  elcVal    :: Char,		-- ^ Character value
+	  expSrcPos :: SrcPos
+      }
     -- | Variable reference
     | ExpVar {
-	   evVar     :: Name,		-- ^ Name of referenced variable
-	   expSrcPos :: SrcPos
-    }
+	  evVar     :: Name,		-- ^ Name of referenced variable
+	  expSrcPos :: SrcPos
+      }
     -- | Function or n-ary operator application
     | ExpApp {
-	   eaFun     :: Expression,	-- ^ Applied function or operator
-     eaArgs    :: [Expression],	-- ^ Arguments
-	   expSrcPos :: SrcPos
-    }
+	  eaFun     :: Expression,	-- ^ Applied function or operator
+          eaArgs    :: [Expression],	-- ^ Arguments
+	  expSrcPos :: SrcPos
+      }
+    -- | Array expression
+    | ExpAry {
+          eaElts    :: [Expression],	-- ^ Array elements
+	  expSrcPos :: SrcPos
+      }
+    -- | Array indexing
+    | ExpIx {
+          eiAry     :: Expression,	-- ^ Array expression
+          eiIx      :: Expression,	-- ^ Indexing expression
+	  expSrcPos :: SrcPos
+      }
+    -- | Record expression
+    | ExpRcd {
+          erFldDefs :: [(Name,Expression)],	-- ^ Record field definitions
+	  expSrcPos :: SrcPos
+      }
+    -- | Record projection
+    | ExpPrj {
+          epRcd     :: Expression,	-- ^ Record expression
+          epFld     :: Name,		-- ^ Field to project out
+	  expSrcPos :: SrcPos
+      }
+    -- | Conditional expression
     | ExpCond {
-      ecBool :: Expression,
-      ecExp1 :: Expression,
-      ecExp2 :: Expression,
-      expSrcPos :: SrcPos
-    }
+	  ecCond    :: Expression,	-- ^ Condition
+          ecTrue    :: Expression,	-- ^ Value if condition true
+	  ecFalse   :: Expression,	-- ^ Value if condition false
+	  expSrcPos :: SrcPos
+      }
 
 
 instance HasSrcPos Expression where
@@ -157,12 +182,13 @@ instance HasSrcPos Expression where
 
 
 -- | Abstract syntax for the syntactic category Declaration
+-- (Most of these are also definitions.)
 data Declaration
     -- | Constant declaration
     = DeclConst {
-	  dcConst    :: Name,		-- ^ Name of defined constant
-	  dcType     :: TypeDenoter,	-- ^ Type of defined constant
-	  dcVal	     :: Expression,	-- ^ Value of defined constant
+	  dcConst    :: Name,		-- ^ Name of declared constant
+	  dcType     :: TypeDenoter,	-- ^ Type of declared constant
+	  dcVal	     :: Expression,	-- ^ Value of declared constant
           declSrcPos :: SrcPos
       }
     -- | Variable declaration
@@ -173,25 +199,73 @@ data Declaration
                                           -- varible, if any
           declSrcPos :: SrcPos
       }
+    -- | Function declaration
+    | DeclFun {
+	  dfFun	     :: Name,		-- ^ Name of declared function
+          dfArgDecls :: [ArgDecl],	-- ^ Declarations of formal arguments
+	  dfType     :: TypeDenoter,	-- ^ Return type of declared function
+	  dfBody     :: Expression,     -- ^ Function boody
+          declSrcPos :: SrcPos
+      }
+    -- | Procedure declaration
+    | DeclProc {
+	  dpProc     :: Name,		-- ^ Name of declared procedure
+          dpArgDecls :: [ArgDecl],	-- ^ Declarations of formal arguments
+	  dpBody     :: Command,	-- ^ Procedure boody
+          declSrcPos :: SrcPos
+      }
 
 
 instance HasSrcPos Declaration where
     srcPos = declSrcPos
 
 
+-- | Abstract syntax for the syntactic category ArgDecl
+data ArgDecl
+    -- | Declaration of formal argument
+    = ArgDecl {
+	  adArg      :: Name,		-- ^ Name of declared argument
+          adArgMode  :: ArgMode,	-- ^ Argument passing mode
+	  adType     :: TypeDenoter,	-- ^ Type of defined constant
+          adSrcPos   :: SrcPos
+      }
+
+
+instance HasSrcPos ArgDecl where
+    srcPos = adSrcPos
+
+
+-- | Argument passing modes
+data ArgMode
+    = ByValue	-- ^ Call-by-value
+    | ByRefIn	-- ^ Call-by-reference in argument (ref. to source)
+    | ByRefOut	-- ^ Call-by-reference out argument (ref. to sink)
+    | ByRefVar	-- ^ Call-by-reference var (in/out) argument (ref. to variable)
+    deriving (Eq, Show)
+
+
 -- | Abstract syntax for the syntactic category TypeDenoter
 
--- Right now, the only types are simple base types like Integer and Bool.
+-- Right now, the only types are simple base types, like Integer and Bool,
+-- and fixed-size arrays and records of such types.
 -- If MiniTriangle were extended to allow users to express e.g. function
 -- types, then this data declaration would have to be extended.
 data TypeDenoter
     -- | Base Type
     = TDBaseType {
-          tdbtName :: Name,	-- ^ Name of the base type
+          tdbtName :: Name,			-- ^ Name of the base type
 	  tdSrcPos :: SrcPos
+      }
+    | TDArray {
+	  tdaEltType :: TypeDenoter,		-- ^ Type of array elements
+          tdaSize    :: Integer,		-- ^ Size of the array
+	  tdSrcPos   :: SrcPos
+      }
+    | TDRecord {
+	  tdrFldTypes :: [(Name, TypeDenoter)],	-- ^ Name and type of fields
+	  tdSrcPos    :: SrcPos
       }
 
 
 instance HasSrcPos TypeDenoter where
     srcPos = tdSrcPos
-
