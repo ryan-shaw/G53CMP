@@ -68,10 +68,11 @@ data Type = SomeType		-- ^ Some unknown type
           | Void		-- ^ The empty type (return type of procedures)
           | Boolean		-- ^ The Boolean type
           | Integer		-- ^ The Integer type
+          | Character
           | Src Type		-- ^ Read-only variable reference (source)
           | Snk Type		-- ^ Write-only variable reference (sink)
           | Ref Type		-- ^ Variable reference
-	  | Ary Type MTInt	-- ^ Array; fields repr. element type and size
+	        | Ary Type MTInt	-- ^ Array; fields repr. element type and size
           | Rcd [(Name, Type)]	-- ^ Record type; field names and their types.
                                 -- Assumed to be sorted by field names.
           | Arr [Type] Type	-- ^ Type of procedures and functions (arrow).
@@ -93,6 +94,7 @@ instance Eq Type where
     Void       == Void       = True
     Boolean    == Boolean    = True
     Integer    == Integer    = True
+    Character  == Character  = True
     Src t1     == Src t2     = t1 == t2
     Snk t1     == Snk t2     = t1 == t2
     Ref t1     == Ref t2     = t1 == t2
@@ -180,6 +182,7 @@ instance Show Type where
     showsPrec _ Void       = showString "Void"
     showsPrec _ Boolean    = showString "Boolean"
     showsPrec _ Integer    = showString "Integer"
+    showParen _ Character  = showString "Character"
     showsPrec d (Src t)    = showParen (d >= 9)
                                        (showString "Src " . showsPrec 9 t)
     showsPrec d (Snk t)    = showParen (d >= 9)

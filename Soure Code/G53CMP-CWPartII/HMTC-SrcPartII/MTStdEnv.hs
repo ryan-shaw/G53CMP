@@ -30,7 +30,7 @@ import Env
 
 -- | The MiniTriangle initial environment.
 --
--- [Types:] Boolean, Integer
+-- [Types:] Boolean, Integer, Character
 --
 -- [Constants:]
 --
@@ -64,11 +64,12 @@ mtStdEnv :: Env
 mtStdEnv =
     mkTopLvlEnv
         [("Boolean", Boolean),
-         ("Integer", Integer)]
+         ("Integer", Integer),
+         ("Character", Character)]
         [("false",   Boolean, ESVBool False),
          ("true",    Boolean, ESVBool True),
-	 ("minint",  Integer, ESVInt (minBound :: MTInt)),
-	 ("maxint",  Integer, ESVInt (maxBound :: MTInt)),
+	     ("minint",  Integer, ESVInt (minBound :: MTInt)),
+	     ("maxint",  Integer, ESVInt (maxBound :: MTInt)),
          ("+",       Arr [Integer, Integer] Integer, ESVLbl "add"),
          ("-",       Arr [Integer, Integer] Integer, ESVLbl "sub"),
          ("*",       Arr [Integer, Integer] Integer, ESVLbl "mul"),
