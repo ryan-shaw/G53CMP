@@ -116,7 +116,11 @@ chkCmd env (A.CmdLet {A.clDecls = ds, A.clBody = c, A.cmdSrcPos = sp}) = do
                        chkDeclarations (openMinScope env) env' ds 
     c'          <- chkCmd env' c			-- env' |- c
     return (CmdLet {clDecls = ds', clBody = c', cmdSrcPos = sp})
-
+-- T-REPEAT
+chkCmd env (A.CmdRepeat {A.crBody = c, A.crCond = e, cmdSrcPos = sp}) = do
+    c' <- chkCmd env c
+    e' <- chkTpExp env e Boolean
+    return (CmdRepeat {crBody = c', crCond = e', cmdSrcPos = sp})
 
 -- Check that declarations/definitions are well-typed in given environment
 -- and environmant for function/procedure bodies and compute extended
@@ -332,6 +336,13 @@ infTpExp env e@(A.ExpLitInt {A.eliVal = n, A.expSrcPos = sp}) = do
     n' <- toMTInt n sp
     return (Integer,				-- env |- n : Integer
             ExpLitInt {eliVal = n', expType = Integer, expSrcPos = sp})
+
+-- T-LITCHAR
+infTpExp env e@(A.ExpLitChr {A.elcVal = n, A.expSrcPos = sp}) = do
+    n' <- toMTChr n sp
+    return (Character,                -- env |- n : Character
+            ExpLitChr {elcVal = n', expType = Character, expSrcPos = sp})
+
 -- T-VAR
 infTpExp env (A.ExpVar {A.evVar = x, A.expSrcPos = sp}) = do
     tms <- lookupName env x sp		-- env(x) = t, sources(t,t)

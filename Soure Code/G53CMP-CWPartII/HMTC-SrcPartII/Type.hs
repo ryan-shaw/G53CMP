@@ -182,7 +182,7 @@ instance Show Type where
     showsPrec _ Void       = showString "Void"
     showsPrec _ Boolean    = showString "Boolean"
     showsPrec _ Integer    = showString "Integer"
-    showParen _ Character  = showString "Character"
+    showsPrec _ Character  = showString "Character"
     showsPrec d (Src t)    = showParen (d >= 9)
                                        (showString "Src " . showsPrec 9 t)
     showsPrec d (Snk t)    = showParen (d >= 9)

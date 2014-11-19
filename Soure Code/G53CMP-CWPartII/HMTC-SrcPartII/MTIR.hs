@@ -81,6 +81,11 @@ data Command
           clBody    :: Command,		-- ^ Let-body
 	  cmdSrcPos :: SrcPos
       }
+    | CmdRepeat {
+      crBody :: Command, -- In order this time
+      crCond :: Expression,
+      cmdSrcPos :: SrcPos
+    }
 
 
 instance HasSrcPos Command where
