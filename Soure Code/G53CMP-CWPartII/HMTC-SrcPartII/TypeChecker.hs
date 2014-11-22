@@ -117,7 +117,7 @@ chkCmd env (A.CmdLet {A.clDecls = ds, A.clBody = c, A.cmdSrcPos = sp}) = do
     c'          <- chkCmd env' c			-- env' |- c
     return (CmdLet {clDecls = ds', clBody = c', cmdSrcPos = sp})
 -- T-REPEAT
-chkCmd env (A.CmdRepeat {A.crBody = c, A.crCond = e, cmdSrcPos = sp}) = do
+chkCmd env (A.CmdRepeat {A.crBody = c, A.crCond = e, A.cmdSrcPos = sp}) = do
     c' <- chkCmd env c
     e' <- chkTpExp env e Boolean
     return (CmdRepeat {crBody = c', crCond = e', cmdSrcPos = sp})
@@ -412,7 +412,12 @@ infTpExp env (A.ExpPrj {A.epRcd = e, A.epFld = f, A.expSrcPos = sp}) = do
     where
         notAFieldMsg f rt = "The type \"" ++ show rt
                             ++ "\" does not contain any field \"" ++ f ++ "\"" 
-
+-- T-COND
+infTpExp env (A.ExpCond {A.ecCond = e, A.ecTrue = t, A.ecFalse = f, A.expSrcPos = sp}) = do
+    (ct, e') <- infNonRefTpExp env e
+    (ct', t') <- infNonRefTpExp env t
+    (ct'', f') <- infNonRefTpExp env f
+    return (ct', ExpCond{ecCond = e', ecTrue = t', ecFalse = f', expType = ct', expSrcPos = sp})
 
 -- Check that expression is well-typed in the given environment and
 -- infer its type assuming it should be an non-reference type:
