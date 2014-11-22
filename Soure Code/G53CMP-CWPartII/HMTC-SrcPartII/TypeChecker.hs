@@ -417,6 +417,7 @@ infTpExp env (A.ExpCond {A.ecCond = e, A.ecTrue = t, A.ecFalse = f, A.expSrcPos 
     (ct, e') <- infNonRefTpExp env e
     (ct', t') <- infNonRefTpExp env t
     (ct'', f') <- infNonRefTpExp env f
+    require (ct' == ct'') sp "both expressions have to be reference type or non reference type, not both"
     return (ct', ExpCond{ecCond = e', ecTrue = t', ecFalse = f', expType = ct', expSrcPos = sp})
 
 -- Check that expression is well-typed in the given environment and
