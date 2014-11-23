@@ -149,16 +149,9 @@ execute majl env n (CmdCall {ccProc = p, ccArgs = as}) = do
     evaluate majl env p
     emit CALLI
 execute majl env n (CmdSeq {csCmds = cs}) = executeSeq majl env n cs
-execute majl env n (CmdIf {ciCond = e, ciThen = c1, ciElse = c2}) = do
-    lblElse <- newName
-    lblOver <- newName
-    evaluate majl env e
-    emit (JUMPIFZ lblElse)
-    execute majl env n c1
-    emit (JUMP lblOver)
-    emit (Label lblElse)
-    execute majl env n c2
-    emit (Label lblOver)
+execute majl env n (CmdIf {ciCondThens = ecs, ciMbElse = mc2}) = do
+    mapM_ (ifBranches majl env n) ecs
+    optionalElse majl env n mc2
 execute majl env n (CmdWhile {cwCond = e, cwBody = c}) = do
     lblLoop <- newName
     lblCond <- newName
@@ -172,7 +165,24 @@ execute majl env n (CmdLet {clDecls = ds, clBody = c}) = do
     (env', n') <- elaborateDecls majl env n ds
     execute majl env' n' c
     emit (POP 0 (n' - n))
+execute majl env n (CmdRepeat {crBody = c, crCond = e}) = do
+    lblLoop <- newName
+    emit (Label lblLoop)
+    execute majl env n c
+    evaluate majl env e
+    emit (JUMPIFZ lblLoop)
 
+ifBranches :: MSL -> CGEnv -> MTInt -> (Expression, Command) -> TAMCG()
+ifBranches majl env n (e, c) = do
+    lblEnd <- newName  
+    evaluate majl env e
+    emit (JUMPIFZ lblEnd)
+    execute majl env n c
+    emit(Label lblEnd)
+
+optionalElse :: MSL -> CGEnv -> MTInt -> Maybe Command -> TAMCG()
+optionalElse majl env n (Just c) = do
+    execute majl env n c
 
 -- Generate code to execute a sequence of commands.
 -- Invariant: Stack depth unchanged.
@@ -382,8 +392,17 @@ evaluate majl env (ExpPrj {epRcd = r, epFld = f, expType = t}) = do
     evaluate majl env r
     emit (LOADL (fldOffset f tr))
     emit ADD
-
-
+evaluate majl env (ExpCond {ecCond = e, ecTrue = e1, ecFalse = e2, expType = t}) = do
+    true <- newName
+    false <- newName
+    done <- newName
+    evaluate majl env e
+    emit (JUMPIFNZ true)
+    evaluate majl env e2
+    emit (JUMP done)
+    emit (Label true)
+    evaluate majl env e1
+    emit (Label done)
 ------------------------------------------------------------------------------
 -- Code generation for variable access and computation of static links
 ------------------------------------------------------------------------------
@@ -483,7 +502,7 @@ sizeOf SomeType  = cgErr "sizeOf" sizeOfErrMsgSomeType
 sizeOf Void      = 0
 sizeOf Boolean   = 1
 sizeOf Integer   = 1
--- sizeOf Character = 1
+sizeOf Character = 1
 sizeOf (Src _)   = 1
 sizeOf (Snk _)   = 1
 sizeOf (Ref _)   = 1

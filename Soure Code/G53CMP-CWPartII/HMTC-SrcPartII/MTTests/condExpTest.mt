@@ -1,6 +1,7 @@
 let
-	var d2 : Boolean
+	var d2 : Boolean;
+	var e : Integer
 in begin
-    d2 := true ? true : false
-    // Should be parsed as e1 ? (e2 ? e3 : e4) : e5
+	e := 2;
+    d2 := e == 3 ? true : false
 end
