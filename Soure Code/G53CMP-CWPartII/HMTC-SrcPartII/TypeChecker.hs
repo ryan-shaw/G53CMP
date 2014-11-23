@@ -418,7 +418,7 @@ infTpExp env (A.ExpPrj {A.epRcd = e, A.epFld = f, A.expSrcPos = sp}) = do
                             ++ "\" does not contain any field \"" ++ f ++ "\"" 
 -- T-COND
 infTpExp env (A.ExpCond {A.ecCond = e, A.ecTrue = t, A.ecFalse = f, A.expSrcPos = sp}) = do
-    (ct, e') <- infNonRefTpExp env e
+    e' <- chkTpExp env e Boolean
     (ct', t') <- infNonRefTpExp env t
     (ct'', f') <- infNonRefTpExp env f
     require (ct' == ct'') sp "both expressions have to be reference type or non reference type, not both"
