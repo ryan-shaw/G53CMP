@@ -181,6 +181,7 @@ ifBranches majl env n (e, c) = do
     emit(Label lblEnd)
 
 optionalElse :: MSL -> CGEnv -> MTInt -> Maybe Command -> TAMCG()
+optionalElse majl env n (Nothing) = (return ())
 optionalElse majl env n (Just c) = do
     execute majl env n c
 
