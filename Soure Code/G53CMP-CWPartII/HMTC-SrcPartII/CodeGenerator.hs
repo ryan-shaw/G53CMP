@@ -150,8 +150,10 @@ execute majl env n (CmdCall {ccProc = p, ccArgs = as}) = do
     emit CALLI
 execute majl env n (CmdSeq {csCmds = cs}) = executeSeq majl env n cs
 execute majl env n (CmdIf {ciCondThens = ecs, ciMbElse = mc2}) = do
-    mapM_ (ifBranches majl env n) ecs
+    lblEnd <- newName
+    mapM_ (ifBranches majl env n lblEnd) ecs
     optionalElse majl env n mc2
+    emit (Label lblEnd)
 execute majl env n (CmdWhile {cwCond = e, cwBody = c}) = do
     lblLoop <- newName
     lblCond <- newName
@@ -172,12 +174,13 @@ execute majl env n (CmdRepeat {crBody = c, crCond = e}) = do
     evaluate majl env e
     emit (JUMPIFZ lblLoop)
 
-ifBranches :: MSL -> CGEnv -> MTInt -> (Expression, Command) -> TAMCG()
-ifBranches majl env n (e, c) = do
+ifBranches :: MSL -> CGEnv -> MTInt -> Name -> (Expression, Command) -> TAMCG()
+ifBranches majl env n l (e, c) = do
     lblEnd <- newName  
     evaluate majl env e
     emit (JUMPIFZ lblEnd)
     execute majl env n c
+    emit (JUMP l)
     emit(Label lblEnd)
 
 optionalElse :: MSL -> CGEnv -> MTInt -> Maybe Command -> TAMCG()
