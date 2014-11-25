@@ -4,7 +4,8 @@ in begin
 	d2 := 0;
 	repeat
 		begin
-			d2 := d2 + 1
+			d2 := d2 + 1;
+			putint(d2)
 		end
 	until d2 == 1
 end
